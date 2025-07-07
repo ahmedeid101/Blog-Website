@@ -1,4 +1,6 @@
 const asyncHandler = require("express-async-handler");
+const path = require("path");
+const fs = require("fs");
 
 class UserController {
   constructor(userService, updateProfileValidator) {
@@ -41,11 +43,53 @@ class UserController {
   });
 
   deleteProfile = asyncHandler(async (req, res) => {
+    const user = await this.userService.getProfile(req.user.id);
+      if (!user) {
+        res.status(404).json({message: 'user not found'})
+      }
+    //delete photo
+    await this.userService.deleteProfilePhoto(user.profilePhoto.publicId);
     await this.userService.deleteProfile(req.user.id);
     res.status(201).json({
       success: true,
       message: "User Deleted Successfully",
     });
+  });
+
+    uploadProfilePhoto = asyncHandler(async (req, res) => {
+      try {
+      // Debug: Log the uploaded file
+      console.log('Uploaded file:', {
+        originalname: req.file?.originalname,
+        mimetype: req.file?.mimetype,
+        size: req.file?.size
+      });
+
+      if (!req.file) throw new Error('No file uploaded or Multer failed to process it');
+
+      // Delete old photo if exists
+      const user = await this.userService.getProfile(req.user.id);
+      if (user.profilePhoto?.publicId) {
+        await this.userService.deleteProfilePhoto(user.profilePhoto.publicId);
+      }
+
+      // Upload new photo
+      const updatedUser = await this.userService.uploadProfilePhoto(
+        req.user.id,
+        req.file
+      );
+
+      res.status(200).json({
+        success: true,
+        data: updatedUser
+      });
+
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        error: error.message
+      });
+    }
   });
 
   getAllUsers = asyncHandler(async (req, res) => {
@@ -65,6 +109,12 @@ class UserController {
   });
 
   deleteAnyProfile = asyncHandler(async (req, res) => {
+      const user = await this.userService.getProfile(req.params.id);
+      if (!user) {
+        res.status(404).json({message: 'user not found'})
+      }
+    //delete photo
+    await this.userService.deleteProfilePhoto(user.profilePhoto.publicId);
     await this.userService.deleteProfile(req.params.id);
     res.status(201).json({
       success: true,

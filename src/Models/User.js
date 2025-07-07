@@ -1,8 +1,8 @@
 const { string, required, object, boolean } = require("joi");
-const mongose = require("mongoose");
+const mongoose = require("mongoose");
 
 //User Schema
-const userSchema = new mongose.Schema({
+const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, 'Please add a name'],
@@ -37,7 +37,11 @@ const userSchema = new mongose.Schema({
     default: 'user'
   },
   profilePhoto: {
-    type: Object,
+    //type: Object,
+      type: {
+        url: String,
+        publicId: String
+    },
     default:{
         url: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
         publicId: null
@@ -70,4 +74,4 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
   return false;
 };
 
-module.exports = mongose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema);

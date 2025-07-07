@@ -1,4 +1,7 @@
 //User Service (Business Logic)
+const { error } = require('winston');
+const cloudinary = require('../Utils/cloudinary');
+
 class UserService {
   constructor(userRepository) {
     this.userRepository = userRepository;
@@ -34,6 +37,35 @@ class UserService {
   async getTotalUsers(role){
     const filter = role ? {role} : {};
     return this.userRepository.countUsers(filter);
+  }
+
+  async uploadProfilePhoto(userId, file){
+    if(!file) throw new Error('No Fle Uploaded');
+
+    // Upload to Cloudinary
+    const result = await new Promise((res, rej) =>{
+      const stream = cloudinary.uploader.upload_stream(
+        {folder: 'user-profiles'},
+        (error, result) =>{
+          if(result) res(result);
+          else rej(error);  
+        }
+      );
+      stream.end(file.buffer);
+    });
+    
+    // Update user profile
+    return this.userRepository.updateUser(userId, {
+        profilePhoto: {
+          url: result.secure_url,
+          publicId: result.public_id
+      }
+    });
+  }
+
+  async deleteProfilePhoto(publicId) {
+    if (!publicId) return;
+    await cloudinary.uploader.destroy(publicId);
   }
 }
 

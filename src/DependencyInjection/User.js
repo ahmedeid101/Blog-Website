@@ -22,6 +22,7 @@ module.exports = {
   getProfile: userController.getProfile,
   updateProfile: userController.updateProfile,
   deleteProfile: userController.deleteProfile,
+  uploadProfilePhoto: userController.uploadProfilePhoto,
   getAllUsers: userController.getAllUsers,
   getAnyProfile: userController.getAnyProfile,
   deleteAnyProfile: userController.deleteAnyProfile,

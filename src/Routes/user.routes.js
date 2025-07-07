@@ -3,6 +3,7 @@ const {
   getProfile,
   updateProfile,
   deleteProfile,
+  uploadProfilePhoto,
   deleteAnyProfile,
   getAllUsers,
   getAnyProfile,
@@ -10,30 +11,24 @@ const {
 } = require("../DependencyInjection/User");
 const authMiddleware = require("../Middlewares/authMiddleware");
 const validateObjectId = require("../Middlewares/validateObjectId");
+const uploadPhoto = require('../Middlewares/photoUpload');
+
 
 const router = express.Router();
 
 // Protected routes
 router.use(authMiddleware());
 
-router.get("/getProfile", getProfile);
-router.put("/updateProfile", updateProfile);
-router.delete("/deleteProfile", deleteProfile);
+// User routes
+router.get("/profile", getProfile);
+router.put("/profile", updateProfile);
+router.delete("/profile", deleteProfile);
+router.post('/profile/upload-photo', uploadPhoto, uploadProfilePhoto);
 
 // Admin-only routes
-router.get("/getAllUsers", authMiddleware(["admin"]), getAllUsers);
-router.get(
-  "/getAnyProfile/:id",
-  validateObjectId,
-  authMiddleware(["admin"]),
-  getAnyProfile
-);
-router.get("/countUsers", authMiddleware(["admin"]), getTotalUsers);
-router.delete(
-  "/deleteProfile/:id",
-  validateObjectId,
-  authMiddleware(["admin"]),
-  deleteAnyProfile
-);
+router.get("/all", authMiddleware(["admin"]), getAllUsers);
+router.get("/user/:id", validateObjectId, authMiddleware(["admin"]), getAnyProfile);
+router.get("/count", authMiddleware(["admin"]), getTotalUsers);
+router.delete("/user/:id", validateObjectId, authMiddleware(["admin"]), deleteAnyProfile);
 
 module.exports = router;
