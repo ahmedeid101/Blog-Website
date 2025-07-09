@@ -1,6 +1,28 @@
+// const multer = require('multer');
+// const { ErrorResponse } = require('../Utils/errorResponse');
+
+// const uploadPhoto = multer({
+//   storage: multer.memoryStorage(), // Store in memory for Cloudinary
+//   limits: { 
+//     fileSize: 5 * 1024 * 1024, // 5MB
+//     files: 1 // Only one file
+//   },
+//   fileFilter: (req, file, cb) => {
+//     const filetypes = /jpe?g|png|gif/;
+//     const mimetype = filetypes.test(file.mimetype);
+//     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    
+//     if (mimetype && extname) {
+//       return cb(null, true);
+//     }
+//     cb(new ErrorResponse('Only images (JPEG, PNG, GIF) are allowed', 400));
+//   }
+// });
+
+// module.exports = uploadPhoto.single('image'); // Field name must match Postman
+
 const path = require("path");
 const multer = require("multer");
-const { ErrorResponse } = require('../Utils/errorResponse');
 
 // //using cloud
 const uploadPhoto = multer({
@@ -27,4 +49,4 @@ const uploadPhoto = multer({
   }
 });
 
-module.exports = uploadPhoto.single('profilePhoto');
+module.exports = uploadPhoto.single('image');

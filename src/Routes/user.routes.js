@@ -8,7 +8,7 @@ const {
   getAllUsers,
   getAnyProfile,
   getTotalUsers,
-} = require("../DependencyInjection/User");
+} = require("../DependencyInjection/UserInjection");
 const authMiddleware = require("../Middlewares/authMiddleware");
 const validateObjectId = require("../Middlewares/validateObjectId");
 const uploadPhoto = require('../Middlewares/photoUpload');

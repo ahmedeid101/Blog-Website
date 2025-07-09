@@ -3,14 +3,14 @@ const mongoose = require("mongoose");
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: [true, "Please add a post title"],
+    required: true,
     trim: true,
     minlength: [2, "Title must be at least 2 characters"],
     maxlength: [200, "Title cannot exceed 200 characters"],
   },
   description: {
     type: String,
-    required: [true, "Please add a description"],
+    required: true,
     trim: true,
     minlength: [10, "Description must be at least 10 characters"],
   },
@@ -21,7 +21,7 @@ const postSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: [true, "Please select a category"],
+    required: true,
     enum: {
       values: ["technology", "nature", "business", "health", "entertainment"],
       message: "Invalid category selection",
@@ -45,8 +45,6 @@ const postSchema = new mongoose.Schema({
   ],
 }, { 
   timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true } 
 });
 
 // Add virtual for comments (if you'll have comments)

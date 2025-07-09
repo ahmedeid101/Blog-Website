@@ -16,6 +16,10 @@ class PostRepository {
         .sort('-createdAt');
     }
 
+    async findByTitleAndUser(title, userId) {
+        return this.model.findOne({ title, user: userId });
+    }
+
     async update(id, updateData){
         return this.model.findByIdAndUpdate(id, updateData, {
             new: true,

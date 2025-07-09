@@ -1,5 +1,4 @@
 //User Service (Business Logic)
-const { error } = require('winston');
 const cloudinary = require('../Utils/cloudinary');
 
 class UserService {

@@ -5,6 +5,7 @@ const dbConnect = require("./config/dbConfig");
 const errorHandler = require('./Middlewares/errorHandler');
 const authRoutes = require("./Routes/auth.route");
 const userRoutes = require('./Routes/user.routes');
+const postRoutes = require('./Routes/post.routes');
 
 //database connection
 dbConnect();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true })); // For form data
 //Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
 
 //Error handler
 app.use(errorHandler);

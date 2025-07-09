@@ -1,10 +1,17 @@
+const ErrorResponse = require("../Utils/errorResponse");
 class PostService {
   constructor(postRepository) {
     this.postRepository = postRepository;
   }
 
   async createPost(postData) {
-    return this.postRepository.createPost(postData);
+    // 1. Check for duplicate
+    const { title, user, category } = postData;
+    const existingPost = await this.postRepository.findByTitleAndUser(title, user);
+    if (existingPost) {
+      throw new ErrorResponse("You already created a post with this title", 400);
+    }
+    return this.postRepository.create(postData);
   }
 
   async getPostById(id) {

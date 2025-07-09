@@ -1,5 +1,5 @@
 const express = require("express");
-const {register, login} = require('../DependencyInjection/Auth');
+const {register, login} = require('../DependencyInjection/AuthInjection');
 
 const router = express.Router();
 
