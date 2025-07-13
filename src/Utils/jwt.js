@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 class JWT {
     constructor(){
         this.secret = process.env.JWT_SECRET;
-        this.expiresIn  = process.env.JWT_EXPIRES_IN || '1h';
+        this.expiresIn  = process.env.JWT_EXPIRES_IN || '3h';
 
           // Verify JWT_SECRET exists
         if (!process.env.JWT_SECRET) {

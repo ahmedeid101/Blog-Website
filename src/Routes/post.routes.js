@@ -20,8 +20,8 @@ router.use(authMiddleware());
 router.post('/create', uploadPhoto, createPost);
 router.get("/", getAllPosts);
 router.get("/:id", validateObjectId, getPost);
-router.put("/:id", validateObjectId, updatePost);
-router.delete("/:id", validateObjectId, deletePost);
+router.put("/:id", uploadPhoto, validateObjectId, updatePost);
+router.delete("/:id", authMiddleware(['admin', 'user']), validateObjectId, deletePost);
 router.put("/:id/like", validateObjectId, likePost);
 router.put("/:id/unlike", validateObjectId, unlikePost);
 
