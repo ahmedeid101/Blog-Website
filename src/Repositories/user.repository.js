@@ -6,7 +6,7 @@ class UserRepository {
   }
 
   async findById(userId){
-    return this.model.findById(userId).select('-password');
+    return this.model.findById(userId).select('-password').populate('posts');
   }
 
     async findByEmail(email) {
@@ -26,7 +26,7 @@ class UserRepository {
   }
 
   async getAllUsers() {
-    return this.model.find().select('-password');
+    return this.model.find().select('-password').populate('posts');
   }
 
   async countUsers(filter = {}){

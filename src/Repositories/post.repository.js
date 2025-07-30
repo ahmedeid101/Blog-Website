@@ -24,38 +24,45 @@ class PostRepository {
   }
 
   async count(filter = {}) {
-  return this.model.countDocuments(filter);
-}
+    return this.model.countDocuments(filter);
+  }
 
   async findByTitleAndUser(title, userId) {
     return this.model.findOne({ title, user: userId });
   }
 
-  async update(id, updateData) {
-    return this.model.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    });
+  async update(id, data, options = {}) {
+    let query = this.model.findByIdAndUpdate(id, { $set: data }, { new: true });
+
+    if (options.populate) {
+      options.populate.forEach((field) => {
+        query = query.populate(
+          field,
+          field === "user" ? "-password" : undefined
+        );
+      });
+    }
+
+    return query;
   }
 
   async delete(id) {
     return this.model.findByIdAndDelete(id);
   }
 
-  async likePost(postId, userId) {
-    return this.model.findByIdAndUpdate(
-      postId,
-      { $addToSet: { likes: userId } },
-      { new: true }
-    );
-  }
+  async updateLikes(id, data, options = {}) {
+    let query = this.model.findByIdAndUpdate(id, data, { new: true });
 
-  async likePost(postId, userId) {
-    return this.model.findByIdAndUpdate(
-      postId,
-      { $pull: { likes: userId } },
-      { new: true }
-    );
+    if (options.populate) {
+      options.populate.forEach((field) => {
+        query = query.populate(
+          field,
+          field === "user" ? "-password" : "username"
+        );
+      });
+    }
+
+    return query;
   }
 }
 

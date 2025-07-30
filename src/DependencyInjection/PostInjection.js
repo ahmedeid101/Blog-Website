@@ -17,7 +17,7 @@ module.exports = {
   getPost: postController.getPost,
   getAllPosts: postController.getAllPosts,
   updatePost: postController.updatePost,
+  updatePostImage: postController.updatePostImage,
   deletePost: postController.deletePost,
-  likePost: postController.likePost,
-  unlikePost: postController.unlikePost
+  toggleLikePost: postController.toggleLikePost
 };

@@ -1,5 +1,5 @@
 //User Service (Business Logic)
-const cloudinary = require('../Utils/cloudinary');
+const cloudinary = require('../config/cloudinary');
 
 class UserService {
   constructor(userRepository) {
