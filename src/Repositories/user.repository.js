@@ -5,8 +5,8 @@ class UserRepository {
     this.model = model;
   }
 
-  async findById(userId){
-    return this.model.findById(userId).select('-password').populate('posts');
+  async findById(id){
+     return this.model.findById(id).select('-password').populate('posts');
   }
 
     async findByEmail(email) {
@@ -21,8 +21,16 @@ class UserRepository {
     ).select('-password');
   }
 
-    async deleteUser(id) {
+  async deleteById(id) {
     return this.model.findByIdAndDelete(id);
+  }
+
+  async deleteMany(filter) {
+    return this.model.deleteMany(filter);
+  }
+
+  async findMany(filter) {
+    return this.model.find(filter);
   }
 
   async getAllUsers() {

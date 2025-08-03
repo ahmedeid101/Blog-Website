@@ -1,9 +1,13 @@
 //User Service (Business Logic)
-const cloudinary = require('../config/cloudinary');
+const ErrorResponse = require("../Utils/errorResponse");
+const cloudinary = require('../config/cloudinaryConfig');
+const {cloudinaryRemoveImage, cloudinaryRemoveMultipleImage} = require("../Utils/cloudinaryUtils");
 
 class UserService {
-  constructor(userRepository) {
+  constructor(userRepository, postRepository, commentRepository) {
     this.userRepository = userRepository;
+    this.postRepository = postRepository;
+    this.commentRepository = commentRepository;
   }
 
   async getProfile(userId) {
@@ -25,9 +29,37 @@ class UserService {
     return this.userRepository.updateUser(userId, filteredUpdates);
   }
 
-  async deleteProfile(userId) {
-    return this.userRepository.deleteUser(userId);
+  async deleteUserProfile(userId, currentUser) {
+  const user = await this.userRepository.findById(userId);
+  if (!user) throw new ErrorResponse("User not found", 404);
+
+  // Allow only admin or user himself
+  if (currentUser.role !== "admin" && currentUser.id !== userId.toString()) {
+    throw new ErrorResponse("Not authorized to delete this profile", 403);
   }
+
+  // Get user's posts
+  const posts = await this.postRepository.findMany({ user: user._id });
+  const publicIds = posts.map(post => post.image?.publicId).filter(Boolean);
+
+  // Remove post images from Cloudinary
+  if (publicIds.length > 0) {
+    await cloudinaryRemoveMultipleImage(publicIds);
+  }
+
+  // Remove profile photo
+  if (user.profilePhoto?.publicId) {
+    await cloudinaryRemoveImage(user.profilePhoto.publicId);
+  }
+
+  // Delete user's posts and comments
+  await this.postRepository.deleteMany({ user: user._id });
+  await this.commentRepository.deleteMany({ user: user._id });
+
+  // Delete the user
+  await this.userRepository.deleteById(userId);
+}
+
 
   async getAllProfiles() {
     return this.userRepository.getAllUsers();

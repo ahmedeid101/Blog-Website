@@ -2,7 +2,7 @@ const express = require("express");
 const {
   getProfile,
   updateProfile,
-  deleteProfile,
+  deleteUserProfile,
   uploadProfilePhoto,
   deleteAnyProfile,
   getAllUsers,
@@ -22,7 +22,7 @@ router.use(authMiddleware());
 // User routes
 router.get("/profile", getProfile);
 router.put("/profile", updateProfile);
-router.delete("/profile", deleteProfile);
+router.delete("/profile/:id", deleteUserProfile);
 router.post('/profile/upload-photo', uploadPhoto, uploadProfilePhoto);
 
 // Admin-only routes

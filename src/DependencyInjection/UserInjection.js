@@ -1,5 +1,11 @@
 const User = require('../Models/User');
+const Post = require("../Models/Post");
+const Comment = require("../Models/Comment");
+
 const UserRepository = require('../Repositories/user.repository');
+const PostRepository = require("../Repositories/post.repository");
+const CommentRepository = require("../Repositories/comment.repository");
+
 const UserService = require('../Services/user.service');
 const UserController = require('../Controllers/user.controller');
 const UpdateProfileValidator = require('../Validations/user.validators');
@@ -8,7 +14,9 @@ const UsernameValidator = require('../Validations/username.validator');
 
 // Setup dependencies
 const userRepository = new UserRepository(User);
-const userService = new UserService(userRepository);
+const postRepository = new PostRepository(Post);
+const commentRepository = new CommentRepository(Comment);
+const userService = new UserService(userRepository, postRepository, commentRepository);
 
 // Setup validator chain
 const validatorChain = new UpdateProfileValidator();
@@ -21,7 +29,7 @@ const userController = new UserController(userService, validatorChain);
 module.exports = {
   getProfile: userController.getProfile,
   updateProfile: userController.updateProfile,
-  deleteProfile: userController.deleteProfile,
+  deleteUserProfile: userController.deleteUserProfile,
   uploadProfilePhoto: userController.uploadProfilePhoto,
   getAllUsers: userController.getAllUsers,
   getAnyProfile: userController.getAnyProfile,

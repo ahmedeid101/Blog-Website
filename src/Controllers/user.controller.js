@@ -42,19 +42,25 @@ class UserController {
   }
   });
 
-  deleteProfile = asyncHandler(async (req, res) => {
-    const user = await this.userService.getProfile(req.user.id);
-      if (!user) {
-        res.status(404).json({message: 'user not found'})
-      }
-    //delete photo
-    await this.userService.deleteProfilePhoto(user.profilePhoto.publicId);
-    await this.userService.deleteProfile(req.user.id);
-    res.status(201).json({
-      success: true,
-      message: "User Deleted Successfully",
-    });
-  });
+  deleteUserProfile = asyncHandler(async (req, res) => {
+  await this.userService.deleteUserProfile(req.params.id, req.user);
+  res.status(200).json({ success: true, message: "User profile and related data deleted successfully" });
+});
+
+
+  // deleteProfile = asyncHandler(async (req, res) => {
+  //   const user = await this.userService.getProfile(req.user.id);
+  //     if (!user) {
+  //       res.status(404).json({message: 'user not found'})
+  //     }
+  //   //delete photo
+  //   await this.userService.deleteProfilePhoto(user.profilePhoto.publicId);
+  //   await this.userService.deleteProfile(req.user.id);
+  //   res.status(201).json({
+  //     success: true,
+  //     message: "User Deleted Successfully",
+  //   });
+  // });
 
     uploadProfilePhoto = asyncHandler(async (req, res) => {
       try {

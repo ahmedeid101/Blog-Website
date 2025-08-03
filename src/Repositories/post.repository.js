@@ -7,7 +7,7 @@ class PostRepository {
   }
 
   async findById(id) {
-    return this.model.findById(id).populate("user", "username profilePhoto");
+    return this.model.findById(id).populate("user", "username").populate("comments");
   }
 
   async findAll(filter = {}, skip = 0, limit = 0) {
@@ -48,6 +48,14 @@ class PostRepository {
 
   async delete(id) {
     return this.model.findByIdAndDelete(id);
+  }
+
+  async findMany(filter) {
+    return this.model.find(filter);
+  }
+
+  async deleteMany(filter) {
+    return this.model.deleteMany(filter);
   }
 
   async updateLikes(id, data, options = {}) {

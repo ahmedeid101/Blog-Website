@@ -1,11 +1,10 @@
 const asyncHandler = require("express-async-handler");
-const cloudinary = require("../config/cloudinary");
+const cloudinary = require("../config/cloudinaryConfig");
 const { date } = require("joi");
 
 class PostController {
-  constructor(postService, postValidator) {
+  constructor(postService) {
     this.postService = postService;
-    this.postValidator = postValidator;
   }
 
   createPost = asyncHandler(async (req, res) => {
@@ -61,17 +60,6 @@ class PostController {
         .json({ success: false, message: "No image provided" });
     }
 
-    // 2. Upload new image to Cloudinary
-    //const result = await new Promise((resolve, reject) => {
-    //   const stream = cloudinary.uploader.upload_stream(
-    //     { folder: "post-images" },
-    //     (error, result) => {
-    //       if (result) resolve(result);
-    //       else reject(error);
-    //     }
-    //   );
-    //   stream.end(req.file.buffer);
-    // });
     if (req.file) {
       const result = await this.#uploadToCloudinary(req.file);
       updatedPost.image = {
@@ -80,28 +68,31 @@ class PostController {
       };
     }
 
-    // 3. Update post image via service
+    // 2. Update post image via service
     updatedPost = await this.postService.updatePostImage(
       req.params.id,
       req.user
-      // {
-      //   url: result.secure_url,
-      //   publicId: result.public_id,
-      // }
     );
 
-    // 4. Return updated post
+    // 3. Return updated post
     res.status(200).json({ success: true, data: updatedPost });
   });
 
   deletePost = asyncHandler(async (req, res) => {
-    //delete post image
+    // 1. Get post and delete image if exists
     const post = await this.postService.getPostById(req.params.id);
-    if (post.image?.publicId)
+    if (post.image?.publicId){
       await cloudinary.uploader.destroy(post.image.publicId);
-
+    }
+    
+    // 2. Delete the post (includes authorization check)
     await this.postService.deletePost(req.params.id, req.user);
-    res.status(200).json({ success: true, data: "Post Deleted Successfully" });
+
+    // 3. Delete all related comments
+    await this.commentService.deleteCommentsByPostId(req.params.id);
+
+    // 4. Respond
+    res.status(200).json({ success: true, data: "Post and related comments deleted successfully" });
   });
 
   toggleLikePost = asyncHandler(async (req, res) => {

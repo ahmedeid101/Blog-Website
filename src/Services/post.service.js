@@ -1,5 +1,5 @@
 const ErrorResponse = require("../Utils/errorResponse");
-const cloudinary = require("../config/cloudinary");
+const cloudinary = require("../config/cloudinaryConfig");
 
 class PostService {
   constructor(postRepository) {
@@ -25,14 +25,6 @@ class PostService {
   async getPostById(id, user) {
     const post = await this.postRepository.findById(id);
     if (!post) throw new ErrorResponse("Post not found", 404);
-
-    // if (
-    //   user.role !== "admin" &&
-    //   post.user._id.toString() !== user._id.toString()
-    // ) {
-    //   throw new ErrorResponse("Not authorized to view this post", 403);
-    // }
-
     return post;
   }
 
@@ -89,7 +81,7 @@ class PostService {
     });
   }
 
-  async deletePost(id, user) {
+    async deletePost(id, user) {
     const post = await this.postRepository.findById(id);
     if (!post) throw new ErrorResponse("Post not found", 404);
 
@@ -102,6 +94,7 @@ class PostService {
     }
     return this.postRepository.delete(id);
   }
+
 
   async updateLikes(postId, updateQuery) {
     return this.postRepository.updateLikes(postId, updateQuery, {
